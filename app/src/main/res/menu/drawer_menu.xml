@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_menu_gallery"
+        android:title="Home" />
+    <item
+        android:id="@+id/nav_deposit"
+        android:icon="@drawable/depositicon"
+        android:title="Diposit" />
+
+    <item
+        android:id="@+id/nav_ExpensesId"
+        android:icon="@drawable/depositicon"
+        android:title="Expenses" />
+
+    <item
+        android:id="@+id/nav_DebtId"
+        android:icon="@drawable/dbed"
+        android:title="Debt" />
+    <item
+        android:id="@+id/nav_CreditId"
+        android:icon="@drawable/credit"
+        android:title="Credit" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="Settings" />
+
+    <item
+        android:id="@+id/nav_AboutappId"
+        android:icon="@drawable/ic_smartphone"
+        android:title="About App" />
+
+
+    <item
+        android:id="@+id/nav_LogoutId"
+        android:icon="@drawable/ic_logout"
+        android:title="Log out" />
+
+</menu>
