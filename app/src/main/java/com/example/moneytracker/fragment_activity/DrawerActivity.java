@@ -1,4 +1,4 @@
-package com.example.moneytracker;
+package com.example.moneytracker.fragment_activity;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
@@ -13,6 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.moneytracker.R;
+import com.example.moneytracker.DB.SqLDatabasehelper;
 
 public class DrawerActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 

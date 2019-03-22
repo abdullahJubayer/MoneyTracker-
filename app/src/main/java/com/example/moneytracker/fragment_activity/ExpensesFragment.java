@@ -1,4 +1,4 @@
-package com.example.moneytracker;
+package com.example.moneytracker.fragment_activity;
 
 
 import android.app.DatePickerDialog;
@@ -13,6 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.example.moneytracker.ArrayListClass;
+import com.example.moneytracker.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;

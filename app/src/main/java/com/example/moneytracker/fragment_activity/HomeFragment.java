@@ -1,6 +1,7 @@
-package com.example.moneytracker;
+package com.example.moneytracker.fragment_activity;
 
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.example.moneytracker.DB.CreditTable;
+import com.example.moneytracker.ModelClass.CreditModel;
+import com.example.moneytracker.R;
 
 import java.util.ArrayList;
 
@@ -18,6 +23,8 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
 
     ListView listView;
+    CreditTable creditTable;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -28,27 +35,19 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_home, container, false);
 
-        ArrayList<String> list=new ArrayList<>();
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
-        list.add("17/2/2019");
+        creditTable=new CreditTable(getContext());
+        SQLiteDatabase db=creditTable.getWritableDatabase();
+
+        ArrayList<CreditModel> list=creditTable.getAllCreditData();
+        ArrayList<String> date=new ArrayList<>();
+
+        for (CreditModel d:list){
+            date.add(d.getDateOfGivenMoney());
+        }
+
 
         listView=v.findViewById(R.id.home_fragment_list);
-        listView.setAdapter(new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,list));
+        listView.setAdapter(new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,date));
 
         return v;
     }

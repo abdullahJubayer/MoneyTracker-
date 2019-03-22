@@ -1,10 +1,12 @@
-package com.example.moneytracker;
+package com.example.moneytracker.fragment_activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.moneytracker.R;
 
 public class MainActivity extends AppCompatActivity {
     Button login;

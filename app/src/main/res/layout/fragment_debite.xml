@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DebiteFragment">
+    tools:context=".fragment_activity.DebiteFragment">
 
     <ScrollView
         android:layout_width="match_parent"

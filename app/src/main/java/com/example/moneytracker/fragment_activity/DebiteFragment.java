@@ -1,4 +1,4 @@
-package com.example.moneytracker;
+package com.example.moneytracker.fragment_activity;
 
 
 import android.database.Cursor;
@@ -8,7 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
+import com.example.moneytracker.R;
+import com.example.moneytracker.DB.SqLDatabasehelper;
 
 import java.util.ArrayList;
 
@@ -31,14 +33,6 @@ public class DebiteFragment extends Fragment {
         sqLDatabasehelper=new SqLDatabasehelper(getActivity());
         SQLiteDatabase database=sqLDatabasehelper.getWritableDatabase();
 
-        Cursor cursor=sqLDatabasehelper.getAllDebitData();
-        if (cursor.getCount()==0){
-            //Toast.makeText(getActivity(),"No Data Found",Toast.LENGTH_SHORT).show();
-        }else {
-            while (cursor.moveToNext()){
-                list.add(cursor.getString(0));
-            }
-        }
 
         View v=inflater.inflate(R.layout.fragment_debite, container, false);
 

@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.moneytracker.fragment_activity.DepositFragment;
+
 public class AddItem_On_Spinner extends AppCompatActivity {
 private EditText addItemEt;
 private Button CancelBtn,SaveBtn;
@@ -47,7 +49,7 @@ SaveBtn.setOnClickListener(new View.OnClickListener() {
     public void previusActivity(String text){
         if (text.equals("Deposit")){
 
-            Intent intent=new Intent(getApplicationContext(),DepositFragment.class);
+            Intent intent=new Intent(getApplicationContext(), DepositFragment.class);
             intent.putExtra("newItem",ItemValue);
             startActivity(intent);
 
