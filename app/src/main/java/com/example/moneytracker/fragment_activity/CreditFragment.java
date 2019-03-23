@@ -30,7 +30,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.moneytracker.DB.CreditTable;
+import com.example.moneytracker.DB.DBHelper;
 import com.example.moneytracker.ModelClass.CreditModel;
+import com.example.moneytracker.ModelClass.Model;
 import com.example.moneytracker.R;
 
 import java.io.ByteArrayOutputStream;
@@ -50,12 +52,13 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
     TextView currentDate,backDate;
     ImageView image;
     ImageButton calculator;
-    CreditTable creditTable;
+    DBHelper helper;
     Button saveBtn,cancleBtn;
     final Calendar myCalendar = Calendar.getInstance();
     String cDate;
     private  int GALLERY=1,CAMERA=2;
     Bitmap imageData;
+    private static final String Type="Credit";
 
     public CreditFragment() {
         // Required empty public constructor
@@ -76,9 +79,9 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
         calculator=v.findViewById(R.id.credit_fragment_calculator_id);
         saveBtn=v.findViewById(R.id.credit_fragment_save_id);
         cancleBtn=v.findViewById(R.id.credit_fragment_cancel_id);
-        creditTable=new CreditTable(getContext());
+        helper=new DBHelper(getContext());
 
-        SQLiteDatabase db=creditTable.getWritableDatabase();
+        SQLiteDatabase db=helper.getWritableDatabase();
 
         currentDate.setOnClickListener(this);
         backDate.setOnClickListener(this);
@@ -144,8 +147,8 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
                 String Note=note.getText().toString();
                 byte[] image=getBitmapAsByteArray(imageData);
 
-                CreditModel data=new CreditModel(String.valueOf(Amount),nameofCreditor,CurrentDate,BackDate,Note,image);
-                long row=creditTable.insertCredtData(data);
+                Model data=new Model(String.valueOf(Amount),nameofCreditor,CurrentDate,BackDate,Note,image,Type);
+                long row=helper.insertData(data);
 
                 if (row == -1){
                     Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();

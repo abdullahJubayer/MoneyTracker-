@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.moneytracker.DB.DBHelper;
 import com.example.moneytracker.R;
 import com.example.moneytracker.DB.SqLDatabasehelper;
 
@@ -26,7 +27,7 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
     ViewPager viewPager;
     TextView tab1,tab2,tab3,tab4,tab5;
     private ViewPagerAdapter pagerAdapter;
-    SqLDatabasehelper databasehelper;
+    DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +36,8 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        databasehelper=new SqLDatabasehelper(this);
-        SQLiteDatabase database=databasehelper.getWritableDatabase();
+        helper=new DBHelper(this);
+        SQLiteDatabase database=helper.getWritableDatabase();
 
 
         navigationView=findViewById(R.id.navigation_drawer);

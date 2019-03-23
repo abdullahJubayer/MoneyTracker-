@@ -37,9 +37,9 @@
 
                 <EditText
 
+                    android:id="@+id/deposit_fragment_amount_id"
                     android:layout_width="280dp"
                     android:layout_height="50dp"
-
                     android:hint="amount"
                     android:padding="5dp"
                     android:paddingTop="10dp"
@@ -73,7 +73,7 @@
 
 
                 <Spinner
-                    android:id="@+id/SpinnerDepositId"
+                    android:id="@+id/deposit_fragment_category_id"
                     android:layout_width="280dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
@@ -84,7 +84,7 @@
 
 
                 <ImageButton
-                    android:id="@+id/AddItemId"
+                    android:id="@+id/deposit_fragment_addCategory_id"
                     android:layout_width="30dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="10dp"
-                android:text="Current Date:"
+                android:text="Date:"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
@@ -116,7 +116,7 @@
 
                 <TextView
                     android:focusable="false"
-                    android:id="@+id/ShowDatetvId"
+                    android:id="@+id/deposit_fragment_currentDate_id"
                     android:text="14/02/2019"
                     android:paddingLeft="20dp"
                     android:textColor="@color/black"
@@ -149,7 +149,7 @@
                 android:textColor="@color/black"
                 android:textSize="20sp" />
             <ImageView
-                android:id="@+id/deposit_image_select"
+                android:id="@+id/deposit_fragment_image_id"
                 android:layout_width="200dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="10dp"
@@ -169,11 +169,11 @@
 
             <EditText
 
+                android:id="@+id/deposit_fragment_note_id"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-
                 android:hint="Type your note here"
                 android:padding="5dp"
                 android:paddingTop="10dp"
@@ -188,6 +188,7 @@
                 android:layout_height="wrap_content">
 
                 <Button
+                    android:id="@+id/deposit_fragment_cancel_id"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="60dp"
@@ -200,6 +201,7 @@
                     android:text="Cencel" />
 
                 <Button
+                    android:id="@+id/deposit_fragment_save_id"
                     android:layout_width="0dp"
                     android:background="@drawable/roundshape"
                     android:layout_height="60dp"

@@ -34,16 +34,18 @@
                 android:paddingTop="10dp">
 
                 <EditText
-
+                    android:id="@+id/debit_fragment_amount_id"
                     android:layout_width="280dp"
                     android:layout_height="50dp"
-
                     android:hint="amount"
                     android:padding="5dp"
                     android:paddingTop="10dp"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:inputType="numberDecimal"
+                    />
 
                 <ImageButton
+                    android:id="@+id/debit_fragment_calculator_id"
                     android:layout_width="40dp"
                     android:layout_height="47dp"
                     android:layout_gravity="center_horizontal"
@@ -53,48 +55,31 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="10dp"
-                android:text="Category/Type:"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="20dp"
-                android:paddingTop="10dp">
-
-
-                <Spinner
-                    android:id="@+id/SpinnerDebtId"
-                    android:layout_width="280dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center_horizontal">
-
-                </Spinner>
-
-
-                <ImageButton
-                    android:layout_width="30dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/ic_additem" />
-            </LinearLayout>
+                android:layout_marginLeft="20dp"
+                android:text="Name of Debtor"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                />
+            <EditText
+                android:id="@+id/debit_fragment_nameOfDebtor_id"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:hint="Name of Creditor"
+                android:textSize="20sp"
+                />
 
             <TextView
+                android:id="@+id/CurentDateTvId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="10dp"
-                android:text="Current Date:"
+                android:text="Take Money"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
@@ -102,17 +87,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <DatePicker
-                    android:id="@+id/DatePickerIdDebt"
-                    android:visibility="invisible"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp">
-
-
-                </DatePicker>
 
                 <TextView
-                    android:id="@+id/ShowDatetvIdDebt"
+                    android:id="@+id/debit_fragment_current_date_id"
                     android:text="14/02/2019"
                     android:paddingLeft="20dp"
                     android:textColor="@color/black"
@@ -127,7 +104,7 @@
                     android:layout_marginRight="20dp"
                     android:background="@color/black"
                     android:layout_marginLeft="20dp"
-                    android:layout_below="@+id/ShowDatetvId"
+                    android:layout_below="@+id/credit_fragment_current_date_id"
                     />
 
 
@@ -148,15 +125,19 @@
 
                 <DatePicker
                     android:id="@+id/BackDateDatePicker"
-                    android:visibility="invisible"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp">
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:visibility="invisible">
 
 
                 </DatePicker>
 
                 <TextView
-                    android:id="@+id/BackDateShowDatetvIdDebt"
+                    android:id="@+id/debit_fragment_back_date_id"
                     android:text="18/02/2019"
                     android:paddingLeft="20dp"
                     android:textColor="@color/black"
@@ -185,6 +166,7 @@
                 android:textColor="@color/black"
                 android:textSize="20sp" />
             <ImageView
+                android:id="@+id/debit_fragment_imageview_id"
                 android:layout_width="200dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="10dp"
@@ -203,12 +185,11 @@
 
 
             <EditText
-
+                android:id="@+id/debit_fragment_note_id"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-
                 android:hint="Type your note here"
                 android:padding="5dp"
                 android:paddingTop="10dp"
@@ -223,18 +204,20 @@
                 android:layout_height="wrap_content">
 
                 <Button
+                    android:id="@+id/debit_fragment_cancel_id"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="60dp"
                     android:padding="10dp"
+                    android:layout_margin="10dp"
+                    android:textColor="@color/white"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:textColor="@color/white"
-                    android:layout_margin="10dp"
                     android:background="@drawable/roundshape"
                     android:text="Cencel" />
 
                 <Button
+                    android:id="@+id/debit_fragment_save_id"
                     android:layout_width="0dp"
                     android:background="@drawable/roundshape"
                     android:layout_height="60dp"

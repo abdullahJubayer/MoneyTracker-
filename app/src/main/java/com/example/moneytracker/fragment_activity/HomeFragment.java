@@ -11,7 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.moneytracker.DB.CreditTable;
+import com.example.moneytracker.DB.DBHelper;
 import com.example.moneytracker.ModelClass.CreditModel;
+import com.example.moneytracker.ModelClass.Model;
 import com.example.moneytracker.R;
 
 import java.util.ArrayList;
@@ -23,8 +25,7 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
 
     ListView listView;
-    CreditTable creditTable;
-
+    DBHelper helper;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -35,14 +36,14 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_home, container, false);
 
-        creditTable=new CreditTable(getContext());
-        SQLiteDatabase db=creditTable.getWritableDatabase();
+        helper=new DBHelper(getContext());
+        SQLiteDatabase db=helper.getWritableDatabase();
 
-        ArrayList<CreditModel> list=creditTable.getAllCreditData();
+        ArrayList<Model> list=helper.getAllCreditData();
         ArrayList<String> date=new ArrayList<>();
 
-        for (CreditModel d:list){
-            date.add(d.getDateOfGivenMoney());
+        for (Model d:list){
+            date.add(d.getType());
         }
 
 
