@@ -3,11 +3,7 @@
     <string name="navigation_drawer_open">open</string>
     <string name="navigation_drawer_close">close</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string-array name="Category_Item">
-
-        <item>Salary</item>
-
-    </string-array>
+    <string name="save_txt">SAVE</string>
+    <string name="update_txt">UPDATE</string>
 </resources>

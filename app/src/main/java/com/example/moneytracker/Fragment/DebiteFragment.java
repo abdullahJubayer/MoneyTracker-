@@ -1,4 +1,4 @@
-package com.example.moneytracker.fragment_activity;
+package com.example.moneytracker.Fragment;
 
 
 import android.Manifest;
@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,22 +20,16 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.moneytracker.DB.CreditTable;
 import com.example.moneytracker.DB.DBHelper;
-import com.example.moneytracker.ModelClass.CreditModel;
 import com.example.moneytracker.ModelClass.Model;
 import com.example.moneytracker.R;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -46,9 +41,9 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreditFragment extends Fragment implements View.OnClickListener {
+public class DebiteFragment extends Fragment implements View.OnClickListener {
 
-    EditText amount,note,nameOfCreditor;
+    EditText amount,note,nameOfDebtor;
     TextView currentDate,backDate;
     ImageView image;
     ImageButton calculator;
@@ -58,29 +53,35 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
     String cDate;
     private  int GALLERY=1,CAMERA=2;
     Bitmap imageData;
-    private static final String Type="Credit";
+    private static final String Type="Debit";
+    private Model accessModel;
 
-    public CreditFragment() {
+    public DebiteFragment() {
         // Required empty public constructor
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v=inflater.inflate(R.layout.fragment_credit, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        amount=v.findViewById(R.id.credit_fragment_amount_id);
-        note=v.findViewById(R.id.credit_fragment_note_id);
-        nameOfCreditor=v.findViewById(R.id.credit_fragment_nameOfCreditor_id);
-        currentDate=v.findViewById(R.id.credit_fragment_current_date_id);
-        backDate=v.findViewById(R.id.credit_fragment_back_date_id);
-        image=v.findViewById(R.id.credit_fragment_imageview_id);
-        calculator=v.findViewById(R.id.credit_fragment_calculator_id);
-        saveBtn=v.findViewById(R.id.credit_fragment_save_id);
-        cancleBtn=v.findViewById(R.id.credit_fragment_cancel_id);
+        View v=inflater.inflate(R.layout.fragment_debite, container, false);
+        findId(v);
+
+        if (getArguments() != null){
+            saveBtn.setText("UPDATE");
+            accessModel= (Model) getArguments().getSerializable("data");
+            if (accessModel != null){
+                amount.setText(accessModel.getAmount());
+                nameOfDebtor.setText(accessModel.getColumn2());
+                currentDate.setText(accessModel.getColumn3());
+                backDate.setText(accessModel.getColumn4());
+                image.setImageBitmap(getBitmap(accessModel.getImage()));
+                imageData=getBitmap(accessModel.getImage());
+                note.setText(accessModel.getNote());
+            }
+        }
+
         helper=new DBHelper(getContext());
-
         SQLiteDatabase db=helper.getWritableDatabase();
 
         currentDate.setOnClickListener(this);
@@ -89,7 +90,20 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
         saveBtn.setOnClickListener(this);
 
 
+
         return v;
+    }
+
+    private void findId(View v) {
+        amount=v.findViewById(R.id.debit_fragment_amount_id);
+        note=v.findViewById(R.id.debit_fragment_note_id);
+        nameOfDebtor=v.findViewById(R.id.debit_fragment_nameOfDebtor_id);
+        currentDate=v.findViewById(R.id.debit_fragment_current_date_id);
+        backDate=v.findViewById(R.id.debit_fragment_back_date_id);
+        image=v.findViewById(R.id.debit_fragment_imageview_id);
+        calculator=v.findViewById(R.id.debit_fragment_calculator_id);
+        saveBtn=v.findViewById(R.id.debit_fragment_save_id);
+        cancleBtn=v.findViewById(R.id.debit_fragment_cancel_id);
     }
 
     final DatePickerDialog.OnDateSetListener datepicker1 = new DatePickerDialog.OnDateSetListener() {
@@ -139,40 +153,50 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
         }
         if (v==saveBtn){
             if (validation()){
-
-                Double Amount=Double.valueOf(amount.getText().toString());
-                String nameofCreditor=nameOfCreditor.getText().toString();
+                String Amount=amount.getText().toString();
+                String name=nameOfDebtor.getText().toString();
                 String CurrentDate=currentDate.getText().toString();
                 String BackDate=backDate.getText().toString();
-                String Note=note.getText().toString();
                 byte[] image=getBitmapAsByteArray(imageData);
+                String Note=note.getText().toString();
 
-                Model data=new Model(String.valueOf(Amount),nameofCreditor,CurrentDate,BackDate,Note,image,Type);
-                long row=helper.insertData(data);
+                if (saveBtn.getText().equals(getString(R.string.save_txt))){
+                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type);
+                    long row=helper.insertData(data);
 
-                if (row == -1){
-                    Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
+                    if (row == -1){
+                        Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else if(saveBtn.getText().equals(getString(R.string.update_txt))){
+                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type);
+                    long result=helper.updateData(accessModel.getID(),data);
+
+                    if (result == -1){
+                        Toast.makeText(getContext(),"Data Updated Failed",Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(getContext(),"Data Updated Success",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
             else {
                 Toast.makeText(getContext(),"Check All Data ",Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 
 
 
     private void updateLabel() {
-        String myFormat = "dd/MM/yy"; //In which you need put here
+        String myFormat = "dd/MM/yyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         cDate=sdf.format(myCalendar.getTime());
         currentDate.setText(cDate);
     }
     private void updateLabel2() {
-        String myFormat = "dd/MM/yy"; //In which you need put here
+        String myFormat = "dd/MM/yyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         cDate=sdf.format(myCalendar.getTime());
         backDate.setText(cDate);
@@ -246,7 +270,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
     public boolean validation(){
 
         String Amount=amount.getText().toString();
-        String nameofCreditor=nameOfCreditor.getText().toString();
+        String nameofCreditor=nameOfDebtor.getText().toString();
         String CurrentDate=currentDate.getText().toString();
         String BackDate=backDate.getText().toString();
         String Note=note.getText().toString();
@@ -258,7 +282,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
         }
         if (nameofCreditor.isEmpty() || nameofCreditor.startsWith(" ")){
             val=false;
-            nameOfCreditor.setError("Enter Creditor Name");
+            nameOfDebtor.setError("Enter Creditor Name");
         }
         if (CurrentDate.isEmpty() || CurrentDate.startsWith(" ")){
             val=false;
@@ -276,5 +300,14 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getContext(),"Image Not Selected ",Toast.LENGTH_LONG).show();
         }
         return val;
+    }
+    private Bitmap getBitmap(byte[] image){
+        Bitmap img=null;
+        try {
+            img= BitmapFactory.decodeByteArray(image,0,image.length);
+            return img;
+        }catch (Exception e){
+            return null;
+        }
     }
 }

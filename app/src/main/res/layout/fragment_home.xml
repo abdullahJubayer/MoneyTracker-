@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment_activity.HomeFragment"
+    tools:context=".Fragment.HomeFragment"
     android:orientation="vertical"
     >
 
@@ -99,13 +99,15 @@
 
     </LinearLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/home_fragment_list"
-        android:padding="5dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
 
-    </ListView>
+        >
+
+    </android.support.v7.widget.RecyclerView>
 
 
 </LinearLayout>

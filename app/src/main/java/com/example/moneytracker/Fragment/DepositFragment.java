@@ -1,4 +1,4 @@
-package com.example.moneytracker.fragment_activity;
+package com.example.moneytracker.Fragment;
 
 
 import android.Manifest;
@@ -9,14 +9,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,26 +30,22 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.moneytracker.AddItem_On_Spinner;
 import com.example.moneytracker.ArrayListClass;
 import com.example.moneytracker.DB.DBHelper;
 import com.example.moneytracker.ModelClass.Model;
 import com.example.moneytracker.R;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
 import static android.app.Activity.RESULT_OK;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ExpensesFragment extends Fragment implements View.OnClickListener {
-
+public class DepositFragment extends Fragment implements View.OnClickListener {
     EditText amount,note;
     Spinner category;;
     ImageButton newCategory;
@@ -59,33 +56,24 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
     String date;
     Bitmap imageData;
     private int GALLERY = 1, CAMERA = 2;
-    private static final String Type="Expenses";
+    private static final String Type="Deposit";
     private DBHelper dbHelper;
+    private Model accessModel;
 
 
-    public ExpensesFragment() {
-        // Required empty public constructor
+    public DepositFragment() {
     }
 
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v=inflater.inflate(R.layout.fragment_deposit, container, false);
 
-        View v = inflater.inflate(R.layout.fragment_expenses, container, false);
+        findID(v);
 
-
-        amount = v.findViewById(R.id.expenses_fragment_amount_id);
-        category = v.findViewById(R.id.expenses_fragment_category_id);
-        newCategory = v.findViewById(R.id.expenses_fragment_addCategory_id);
-        currentDate = v.findViewById(R.id.expenses_fragment_currentDate_id);
-        image = v.findViewById(R.id.expenses_fragment_image_id);
-        note = v.findViewById(R.id.expenses_fragment_note_id);
-        save = v.findViewById(R.id.expenses_fragment_save_id);
-        cancel = v.findViewById(R.id.expenses_fragment_cancel_id);
-        dbHelper = new DBHelper(getContext());
-
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper=new DBHelper(getContext());
+        SQLiteDatabase db=dbHelper.getWritableDatabase();
 
 
         newCategory.setOnClickListener(this);
@@ -94,14 +82,41 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
         save.setOnClickListener(this);
         cancel.setOnClickListener(this);
 
-        ArrayListClass arrayListClass = new ArrayListClass();
 
+        ArrayListClass arrayListClass=new ArrayListClass();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.showspinneritem_sample_lay, R.id.ShowSpinnerTxtId, arrayListClass.getArrayList());
         category.setAdapter(adapter);
-        currentDate.setText(updateLabel());
 
+        if (getArguments() != null){
+            save.setText("UPDATE");
+             accessModel= (Model) getArguments().getSerializable("data");
+            if (accessModel != null){
+
+                amount.setText(accessModel.getAmount());
+                category.setSelection(returnSpinnerPosition(accessModel.getColumn2()));
+                currentDate.setText(accessModel.getColumn3());
+                image.setImageBitmap(getBitmap(accessModel.getImage()));
+                imageData=getBitmap(accessModel.getImage());
+                note.setText(accessModel.getNote());
+            }
+        }
+        else {
+            currentDate.setText(updateLabel());
+        }
         return v;
     }
+
+    private void findID(View v) {
+        amount=v.findViewById(R.id.deposit_fragment_amount_id);
+        category=v.findViewById(R.id.deposit_fragment_category_id);
+        newCategory=v.findViewById(R.id.deposit_fragment_addCategory_id);
+        currentDate=v.findViewById(R.id.deposit_fragment_currentDate_id);
+        image=v.findViewById(R.id.deposit_fragment_image_id);
+        note=v.findViewById(R.id.deposit_fragment_note_id);
+        save=v.findViewById(R.id.deposit_fragment_save_id);
+        cancel=v.findViewById(R.id.deposit_fragment_cancel_id);
+    }
+
 
     final DatePickerDialog.OnDateSetListener datepicker = new DatePickerDialog.OnDateSetListener() {
 
@@ -117,7 +132,7 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
 
     };
     private String updateLabel() {
-        String myFormat = "dd/MM/yy"; //In which you need put here
+        String myFormat = "dd/MM/yyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         date=sdf.format(myCalendar.getTime());
         currentDate.setText(date);
@@ -146,15 +161,28 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
                 String CurrentDate=currentDate.getText().toString();
                 byte[] image=getBitmapAsByteArray(imageData);
                 String Note=note.getText().toString();
-                Model data=new Model(String.valueOf(Amount),Category,CurrentDate,null,Note,image,Type);
-                long row=dbHelper.insertData(data);
 
-                if (row == -1){
-                    Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
+                if (save.getText().equals(getString(R.string.save_txt))){
+                    Model data=new Model(0,Amount,Category,CurrentDate,null,Note,image,Type);
+                    long row=dbHelper.insertData(data);
+
+                    if (row == -1){
+                        Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
+                else if(save.getText().equals(getString(R.string.update_txt))){
+                    Model data=new Model(0,Amount,Category,CurrentDate,null,Note,image,Type);
+                    long result=dbHelper.updateData(accessModel.getID(),data);
+
+                    if (result == -1){
+                        Toast.makeText(getContext(),"Data Updated Failed",Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(getContext(),"Data Updated Success",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                }
             else {
                 Toast.makeText(getContext(),"Check All Data ",Toast.LENGTH_SHORT).show();
             }
@@ -163,7 +191,6 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
 
         }
     }
-
     private void showPictureDialog(){
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getActivity());
         pictureDialog.setTitle("Select Action");
@@ -263,4 +290,25 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
     }
 
 
-}
+    private int returnSpinnerPosition(String string){
+        int position=0;
+        for (int i=0;i<ArrayListClass.getArrayList().size();i++){
+            if (string.equals(ArrayListClass.getArrayList().get(i))){
+                position=i;
+            }
+        }
+        Log.e("pooooooo",String.valueOf(position));
+        return position;
+    }
+    private Bitmap getBitmap(byte[] image){
+        Bitmap img=null;
+        try {
+            img=BitmapFactory.decodeByteArray(image,0,image.length);
+            return img;
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+
+    }

@@ -1,7 +1,12 @@
 package com.example.moneytracker.ModelClass;
 
-public class Model {
+import android.os.Parcelable;
 
+import java.io.Serializable;
+
+public class Model implements Serializable {
+
+    private  int ID;
     private  String Amount;
     private  String Column2;
     private  String Column3;
@@ -10,7 +15,8 @@ public class Model {
     private  byte[] Image;
     private  String Type;
 
-    public Model(String amount, String column2, String column3, String column4, String note, byte[] image, String type) {
+    public Model(int id,String amount, String column2, String column3, String column4, String note, byte[] image, String type) {
+        ID=id;
         Amount = amount;
         Column2 = column2;
         Column3 = column3;
@@ -20,6 +26,9 @@ public class Model {
         Type = type;
     }
 
+    public int getID() {
+        return ID;
+    }
     public String getAmount() {
         return Amount;
     }

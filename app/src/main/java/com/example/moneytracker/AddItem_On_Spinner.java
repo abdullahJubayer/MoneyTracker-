@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.moneytracker.fragment_activity.DepositFragment;
+import com.example.moneytracker.Fragment.DepositFragment;
 
 public class AddItem_On_Spinner extends AppCompatActivity {
 private EditText addItemEt;

@@ -1,9 +1,12 @@
-package com.example.moneytracker.fragment_activity;
+package com.example.moneytracker.Activity;
 
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,12 +16,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.moneytracker.DB.DBHelper;
+import com.example.moneytracker.ModelClass.Model;
 import com.example.moneytracker.R;
-import com.example.moneytracker.DB.SqLDatabasehelper;
+import com.example.moneytracker.Fragment.CreditFragment;
+import com.example.moneytracker.Fragment.DebiteFragment;
+import com.example.moneytracker.Fragment.DepositFragment;
+import com.example.moneytracker.Fragment.ExpensesFragment;
+import com.example.moneytracker.Fragment.HomeFragment;
 
-public class DrawerActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
+public class DrawerActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener, HomeFragment.SendData {
 
     private DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle toggle;
@@ -37,7 +44,6 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         helper=new DBHelper(this);
-        SQLiteDatabase database=helper.getWritableDatabase();
 
 
         navigationView=findViewById(R.id.navigation_drawer);
@@ -204,6 +210,7 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.bottom_navigation_menu_daily:
                 Toast.makeText(DrawerActivity.this,"Daily",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(DrawerActivity.this,DeilyList.class));
                 break;
             case R.id.bottom_navigation_menu_monthly:
                 Toast.makeText(DrawerActivity.this,"Monthly",Toast.LENGTH_SHORT).show();
@@ -213,5 +220,44 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void send(Model model) {
+        if (model==null){
+            Toast.makeText(DrawerActivity.this,"model null",Toast.LENGTH_SHORT).show();
+        }else {
+            switch (model.getType()){
+                case "Deposit":
+                    DepositFragment depositFragment=new DepositFragment();
+                    setFragment(depositFragment,model);
+                    break;
+                case "Expenses":
+                    ExpensesFragment expensesFragment=new ExpensesFragment();
+                    setFragment(expensesFragment,model);
+                    break;
+                case "Debit":
+                    DebiteFragment debiteFragment=new DebiteFragment();
+                    setFragment(debiteFragment,model);
+                    break;
+                case "Credit":
+                    CreditFragment creditFragment=new CreditFragment();
+                    setFragment(creditFragment,model);
+                    break;
+            }
+
+        }
+
+    }
+
+    private void setFragment(Fragment fragment,Model model) {
+        Bundle bundle=new Bundle();
+        bundle.putSerializable("data",model);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        fragment.setArguments(bundle);
+        transaction.replace(R.id.drawer_id,fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

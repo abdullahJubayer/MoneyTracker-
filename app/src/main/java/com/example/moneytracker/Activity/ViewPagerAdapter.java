@@ -1,14 +1,14 @@
-package com.example.moneytracker.fragment_activity;
+package com.example.moneytracker.Activity;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.moneytracker.fragment_activity.CreditFragment;
-import com.example.moneytracker.fragment_activity.DebiteFragment;
-import com.example.moneytracker.fragment_activity.DepositFragment;
-import com.example.moneytracker.fragment_activity.ExpensesFragment;
-import com.example.moneytracker.fragment_activity.HomeFragment;
+import com.example.moneytracker.Fragment.CreditFragment;
+import com.example.moneytracker.Fragment.DebiteFragment;
+import com.example.moneytracker.Fragment.DepositFragment;
+import com.example.moneytracker.Fragment.ExpensesFragment;
+import com.example.moneytracker.Fragment.HomeFragment;
 
 class ViewPagerAdapter extends FragmentPagerAdapter {
     public ViewPagerAdapter(FragmentManager fm) {

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment_activity.DebiteFragment">
+    tools:context=".Fragment.DebiteFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -221,7 +221,7 @@
                     android:layout_width="0dp"
                     android:background="@drawable/roundshape"
                     android:layout_height="60dp"
-                    android:text="Save"
+                    android:text="@string/save_txt"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:textColor="@color/white"

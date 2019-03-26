@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment_activity.DrawerActivity"
+    tools:context=".Activity.DrawerActivity"
     android:fitsSystemWindows="false"
     android:id="@+id/drawer_id"
     android:clipToPadding="false"
+
     >
 
     <android.support.design.widget.CoordinatorLayout

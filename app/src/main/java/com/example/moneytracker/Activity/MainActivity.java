@@ -1,4 +1,4 @@
-package com.example.moneytracker.fragment_activity;
+package com.example.moneytracker.Activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
