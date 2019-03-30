@@ -1,6 +1,8 @@
 package com.example.moneytracker.Activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -12,18 +14,24 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.moneytracker.DB.DBHelper;
+import com.example.moneytracker.Fragment.Setting_Fragment;
 import com.example.moneytracker.ModelClass.Model;
+import com.example.moneytracker.ModelClass.Model_UserInfo;
 import com.example.moneytracker.R;
 import com.example.moneytracker.Fragment.CreditFragment;
 import com.example.moneytracker.Fragment.DebiteFragment;
 import com.example.moneytracker.Fragment.DepositFragment;
 import com.example.moneytracker.Fragment.ExpensesFragment;
 import com.example.moneytracker.Fragment.HomeFragment;
+
+import java.util.ArrayList;
 
 public class DrawerActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener, HomeFragment.SendData {
 
@@ -35,6 +43,8 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
     TextView tab1,tab2,tab3,tab4,tab5;
     private ViewPagerAdapter pagerAdapter;
     DBHelper helper;
+    View headerView;
+    Model_UserInfo userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +52,8 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_drawer);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        userInfo= (Model_UserInfo) getIntent().getSerializableExtra("Data");
 
         helper=new DBHelper(this);
 
@@ -64,6 +76,8 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
 
+
+
         navigationView.setNavigationItemSelectedListener(this);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         tab1.setOnClickListener(this);
@@ -71,6 +85,12 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         tab3.setOnClickListener(this);
         tab4.setOnClickListener(this);
         tab5.setOnClickListener(this);
+
+        headerView = navigationView.getHeaderView(0);
+        TextView name=headerView.findViewById(R.id.nav_header_profile_name);
+        ImageView image=headerView.findViewById(R.id.nav_header_profile_image);
+        name.setText(userInfo.getName());
+        image.setImageBitmap(getBitmap(userInfo.getIMG()));
 
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -208,15 +228,21 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
                 mDrawerLayout.closeDrawers();
                 viewPager.setCurrentItem(4);
                 break;
+            case R.id.nav_settings:
+                mDrawerLayout.closeDrawers();
+                startActivity(new Intent(DrawerActivity.this, ContainerList.class).putExtra("Tag","Setting"));
+                break;
             case R.id.bottom_navigation_menu_daily:
                 Toast.makeText(DrawerActivity.this,"Daily",Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(DrawerActivity.this,DeilyList.class));
+                startActivity(new Intent(DrawerActivity.this, ContainerList.class).putExtra("Tag","Daily"));
                 break;
             case R.id.bottom_navigation_menu_monthly:
                 Toast.makeText(DrawerActivity.this,"Monthly",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(DrawerActivity.this,ContainerList.class).putExtra("Tag","Monthly"));
                 break;
             case R.id.bottom_navigation_menu_yearly:
                 Toast.makeText(DrawerActivity.this,"Yearly",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(DrawerActivity.this,ContainerList.class).putExtra("Tag","Yearly"));
                 break;
         }
         return true;
@@ -227,37 +253,33 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         if (model==null){
             Toast.makeText(DrawerActivity.this,"model null",Toast.LENGTH_SHORT).show();
         }else {
-            switch (model.getType()){
-                case "Deposit":
-                    DepositFragment depositFragment=new DepositFragment();
-                    setFragment(depositFragment,model);
-                    break;
-                case "Expenses":
-                    ExpensesFragment expensesFragment=new ExpensesFragment();
-                    setFragment(expensesFragment,model);
-                    break;
-                case "Debit":
-                    DebiteFragment debiteFragment=new DebiteFragment();
-                    setFragment(debiteFragment,model);
-                    break;
-                case "Credit":
-                    CreditFragment creditFragment=new CreditFragment();
-                    setFragment(creditFragment,model);
-                    break;
+            startActivity(new Intent(DrawerActivity.this, UpdateContainer.class).putExtra("dataModel", model));
             }
-
-        }
 
     }
 
-    private void setFragment(Fragment fragment,Model model) {
-        Bundle bundle=new Bundle();
-        bundle.putSerializable("data",model);
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        fragment.setArguments(bundle);
-        transaction.replace(R.id.drawer_id,fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+    private Bitmap getBitmap(byte[] image){
+        Bitmap img=null;
+        try {
+            img= BitmapFactory.decodeByteArray(image,0,image.length);
+            return img;
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (viewPager.getCurrentItem()!= 0) {
+            viewPager.setCurrentItem(0);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 }

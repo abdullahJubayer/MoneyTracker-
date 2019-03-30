@@ -38,6 +38,8 @@ import com.example.moneytracker.R;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Month;
+import java.util.Date;
 import java.util.Locale;
 import static android.app.Activity.RESULT_OK;
 
@@ -59,6 +61,7 @@ public class DepositFragment extends Fragment implements View.OnClickListener {
     private static final String Type="Deposit";
     private DBHelper dbHelper;
     private Model accessModel;
+    private String Month,Year;
 
 
     public DepositFragment() {
@@ -132,9 +135,15 @@ public class DepositFragment extends Fragment implements View.OnClickListener {
 
     };
     private String updateLabel() {
-        String myFormat = "dd/MM/yyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        String myFormat = "dd/MM/yyy";
+        String m = "MM/yyy";
+        String y = "yyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+        SimpleDateFormat month = new SimpleDateFormat(m,Locale.getDefault());
+        SimpleDateFormat year = new SimpleDateFormat(y,Locale.getDefault());
         date=sdf.format(myCalendar.getTime());
+        Month=month.format(myCalendar.getTime());
+        Year=year.format(myCalendar.getTime());
         currentDate.setText(date);
         return date;
     }
@@ -163,8 +172,18 @@ public class DepositFragment extends Fragment implements View.OnClickListener {
                 String Note=note.getText().toString();
 
                 if (save.getText().equals(getString(R.string.save_txt))){
-                    Model data=new Model(0,Amount,Category,CurrentDate,null,Note,image,Type);
+
+                    if (Month==null || Year==null){
+                        SimpleDateFormat formaterMonth=new SimpleDateFormat("MM/yyy");
+                        SimpleDateFormat formaterYear=new SimpleDateFormat("yyy");
+                        Date date=new Date();
+                        Month=formaterMonth.format(date);
+                        Year=formaterYear.format(date);
+                    }
+
+                    Model data=new Model(0,Amount,Category,CurrentDate,null,Note,image,Type,Month,Year);
                     long row=dbHelper.insertData(data);
+                    
 
                     if (row == -1){
                         Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
@@ -173,7 +192,16 @@ public class DepositFragment extends Fragment implements View.OnClickListener {
                     }
                 }
                 else if(save.getText().equals(getString(R.string.update_txt))){
-                    Model data=new Model(0,Amount,Category,CurrentDate,null,Note,image,Type);
+
+                    if (Month==null || Year==null){
+                        SimpleDateFormat formaterMonth=new SimpleDateFormat("MM/yyy");
+                        SimpleDateFormat formaterYear=new SimpleDateFormat("yyy");
+                        Date date=new Date();
+                        Month=formaterMonth.format(date);
+                        Year=formaterYear.format(date);
+                    }
+
+                    Model data=new Model(0,Amount,Category,CurrentDate,null,Note,image,Type,Month,Year);
                     long result=dbHelper.updateData(accessModel.getID(),data);
 
                     if (result == -1){

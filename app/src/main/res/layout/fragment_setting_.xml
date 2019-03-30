@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.Setting_Fragment">
+
+    <LinearLayout
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:paddingTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/edit_pro_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_add"
+                    />
+
+            <EditText android:id="@+id/edit_pro_name"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:inputType="text"
+                android:hint="User Name"
+                android:paddingLeft="15dp"
+                android:background="@drawable/square_back"
+                />
+
+            <EditText android:id="@+id/edit_pro_pass"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:inputType="text"
+                android:hint="User Pass"
+                android:paddingLeft="15dp"
+                android:background="@drawable/square_back"
+                />
+
+
+            <Button
+                android:id="@+id/pro_update_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="Set"
+                android:textColor="@color/black"
+                android:background="@drawable/square_back"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+

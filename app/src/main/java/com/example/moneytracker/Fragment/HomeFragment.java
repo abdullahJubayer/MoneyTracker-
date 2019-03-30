@@ -2,12 +2,15 @@ package com.example.moneytracker.Fragment;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,26 +40,20 @@ public class HomeFragment extends Fragment implements RecyclerAdapter.RecyclerIt
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_home, container, false);
+        Log.e("life","onCreateView");
 
 
         helper=new DBHelper(getContext());
-        SQLiteDatabase db=helper.getWritableDatabase();
+        list=helper.getAllData();
 
-         list=helper.getAllData();
         ArrayList<String> date=new ArrayList<>();
 
         for (Model d:list){
             date.add(d.getType());
         }
 
-        recyclerAdapter=new RecyclerAdapter(getContext(),list);
         recyclerView=v.findViewById(R.id.home_fragment_list);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        recyclerAdapter.notifyDataSetChanged();
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerAdapter.setClickListener(this);
+
 
 
         return v;
@@ -74,11 +71,44 @@ public class HomeFragment extends Fragment implements RecyclerAdapter.RecyclerIt
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.e("life","onAttach");
+
         try {
             sd= (SendData) getActivity();
         }
         catch (ClassCastException e){
             throw new ClassCastException("Error in Sending data. Please try again");
         }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Log.e("life","onStart");
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("life","onResume");
+
+        list=helper.getAllData();
+
+        if (list.size()==0){
+
+        }else {
+            recyclerAdapter=new RecyclerAdapter(getContext(),list);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
+            recyclerView.setAdapter(recyclerAdapter);
+            recyclerAdapter.notifyDataSetChanged();
+            recyclerAdapter.setClickListener(this);
+        }
+
+
     }
 }

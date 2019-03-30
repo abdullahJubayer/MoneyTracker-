@@ -14,8 +14,10 @@ public class Model implements Serializable {
     private  String Note;
     private  byte[] Image;
     private  String Type;
+    private  String Month;
+    private  String Year;
 
-    public Model(int id,String amount, String column2, String column3, String column4, String note, byte[] image, String type) {
+    public Model(int id,String amount, String column2, String column3, String column4, String note, byte[] image, String type,String month,String year) {
         ID=id;
         Amount = amount;
         Column2 = column2;
@@ -24,6 +26,8 @@ public class Model implements Serializable {
         Note = note;
         Image = image;
         Type = type;
+        Month=month;
+        Year=year;
     }
 
     public int getID() {
@@ -55,5 +59,13 @@ public class Model implements Serializable {
 
     public String getType() {
         return Type;
+    }
+
+    public String getMonth() {
+        return Month;
+    }
+
+    public String getYear() {
+        return Year;
     }
 }

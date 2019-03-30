@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +35,7 @@ import com.example.moneytracker.R;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import static android.app.Activity.RESULT_OK;
 
@@ -54,6 +57,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
     Bitmap imageData;
     private static final String Type="Credit";
     private Model accessModel;
+    private String Month,Year;
 
 
     public CreditFragment() {
@@ -160,7 +164,16 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
                 String Note=note.getText().toString();
 
                 if (saveBtn.getText().equals(getString(R.string.save_txt))){
-                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type);
+
+                    if (Month==null || Year==null){
+                        SimpleDateFormat formaterMonth=new SimpleDateFormat("MM/yyy");
+                        SimpleDateFormat formaterYear=new SimpleDateFormat("yyy");
+                        Date date=new Date();
+                        Month=formaterMonth.format(date);
+                        Year=formaterYear.format(date);
+                    }
+
+                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
                     long row=helper.insertData(data);
 
                     if (row == -1){
@@ -170,7 +183,16 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
                     }
                 }
                 else if(saveBtn.getText().equals(getString(R.string.update_txt))){
-                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type);
+
+                    if (Month==null || Year==null){
+                        SimpleDateFormat formaterMonth=new SimpleDateFormat("MM/yyy");
+                        SimpleDateFormat formaterYear=new SimpleDateFormat("yyy");
+                        Date date=new Date();
+                        Month=formaterMonth.format(date);
+                        Year=formaterYear.format(date);
+                    }
+
+                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
                     long result=helper.updateData(accessModel.getID(),data);
 
                     if (result == -1){
@@ -189,13 +211,20 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
 
 
     private void updateLabel() {
-        String myFormat = "dd/MM/yyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        String myFormat = "dd/MM/yyy";
+        String m = "MM/yyy";
+        String y = "yyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+        SimpleDateFormat month = new SimpleDateFormat(m,Locale.getDefault());
+        SimpleDateFormat year = new SimpleDateFormat(y,Locale.getDefault());
         cDate=sdf.format(myCalendar.getTime());
+        Month=month.format(myCalendar.getTime());
+        Year=year.format(myCalendar.getTime());
         currentDate.setText(cDate);
     }
     private void updateLabel2() {
-        String myFormat = "dd/MM/yyy"; //In which you need put here
+        String myFormat = "dd/MM/yyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         cDate=sdf.format(myCalendar.getTime());
         backDate.setText(cDate);
@@ -310,4 +339,5 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
             return null;
         }
     }
+
 }
