@@ -30,6 +30,7 @@
                 android:text="Income" />
 
             <TextView
+                android:id="@+id/home_fragment_income"
                 android:layout_marginTop="4dp"
                 android:text="5000"
                 android:textColor="#01ff45"
@@ -58,6 +59,7 @@
                 android:text="Expenses" />
 
             <TextView
+                android:id="@+id/home_fragment_expenses"
                 android:layout_marginTop="4dp"
                 android:text="2000"
                 android:textColor="#ff0000"
@@ -85,6 +87,7 @@
                 android:text="Balance" />
 
             <TextView
+                android:id="@+id/home_fragment_balance"
                 android:layout_marginTop="4dp"
                 android:text="3000"
                 android:textColor="#01ff45"

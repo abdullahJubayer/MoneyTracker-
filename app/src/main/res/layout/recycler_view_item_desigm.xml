@@ -21,7 +21,7 @@
             android:id="@+id/layout_txt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3.4"
+            android:layout_weight="3"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/title_id"
@@ -46,7 +46,7 @@
 
         </LinearLayout>
         <RelativeLayout
-            android:layout_weight=".5"
+            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/layout_txt"
@@ -64,10 +64,12 @@
                     android:id="@+id/taka_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textColor="@color/black"
                     android:text="T500"
                     android:paddingTop="5dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     />
 
                 <ImageButton

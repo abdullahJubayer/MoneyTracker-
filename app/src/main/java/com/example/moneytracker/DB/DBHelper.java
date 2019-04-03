@@ -17,13 +17,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private static int VERSION=6;
     public static  String TableName="AllData";
     private static  String ID="ID";
-    private static  String Amount="Amount";
+    public static  String Amount="Amount";
     private static  String Column2="Column2";
     private static  String Column3="Column3";
     private static  String Column4="Column4";
     private static  String Note="Note";
     private static  String Image="Image";
-    private static  String Type="Type";
+    public static  String Type="Type";
     private static  String Month="Month";
     private static  String Year="Year";
     private static  String p_Name="Name";
