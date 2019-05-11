@@ -39,10 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
         login=findViewById(R.id.LoginBtnId);
 
-        if (userData.size()==0){
-                startActivity(new Intent(MainActivity.this, ContainerList.class).putExtra("Tag","Setting"));
-            }
-
             register.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -55,22 +51,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (validet()){
+                    if (userData.size() == 0){
+                        Toast.makeText(MainActivity.this, "No admin Found", Toast.LENGTH_SHORT).show();
+                    }else{
                         String databaseName=userData.get(0).getName();
                         String databasePass=userData.get(0).getPassword();
                         String giveName=name.getText().toString();
                         String givePass=password.getText().toString();
 
-//                        Model_UserInfo info=new Model_UserInfo(name.getText().toString(),password.getText().toString(),null);
-//                        helper.updateImgPass(info);
-//
-//                        Intent intent=new Intent(MainActivity.this,DrawerActivity.class);
-//                        startActivity(intent);
-                            if (databaseName.equals(giveName) && databasePass.equals(givePass)){
-                                Intent intent=new Intent(MainActivity.this,DrawerActivity.class).putExtra("Data",userData.get(0));
-                                startActivity(intent);
-                            }else {
-                                Toast.makeText(MainActivity.this,"UserName and Password Not Match",Toast.LENGTH_SHORT).show();
-                            }
+                        if (databaseName.equals(giveName) && databasePass.equals(givePass)){
+                            Intent intent=new Intent(MainActivity.this,DrawerActivity.class).putExtra("Data",userData.get(0));
+                            startActivity(intent);
+                        }else {
+                            Toast.makeText(MainActivity.this,"UserName and Password Not Match",Toast.LENGTH_SHORT).show();
+                        }
+                    }
                         }
                     }
         });

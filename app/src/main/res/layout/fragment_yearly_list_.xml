@@ -7,23 +7,6 @@ tools:context=".Fragment.YearlyList_Fragment"
 android:orientation="vertical"
     >
 
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Yearly History"
-    android:gravity="center"
-    android:textSize="30sp"
-    android:padding="10dp"
-    android:textColor="@color/black_gray"
-    android:layout_marginBottom="5dp"
-    />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black_gray"
-        android:layout_marginBottom="5dp"
-        />
-
 <android.support.v7.widget.RecyclerView
     android:id="@+id/yearly_list_recycler_view"
     android:layout_width="match_parent"

@@ -7,18 +7,6 @@
     android:orientation="vertical"
     >
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Monthly History"
-        android:gravity="center"
-        android:textSize="30sp"
-        android:padding="10dp"
-        android:textColor="@color/aqua"
-        android:background="@drawable/square_back"
-        android:layout_marginBottom="5dp"
-        />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/monthly_recycler_view"
         android:layout_width="match_parent"

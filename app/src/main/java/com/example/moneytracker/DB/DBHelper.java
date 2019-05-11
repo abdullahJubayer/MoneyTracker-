@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class DBHelper extends SQLiteOpenHelper {
 
     Context context;
-    private static int VERSION=6;
+    private static int VERSION=1;
     public static  String TableName="AllData";
     private static  String ID="ID";
     public static  String Amount="Amount";
@@ -36,7 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
             " Text,"+Column3+ " Varchar,"+Column4+" Varchar,"+Note+" Text,"+Image+" Varchar,"+Type+" Text,"+Month+" Varchar,"+Year+" Varchar);";
 
     public DBHelper(Context context) {
-        super(context, "DB", null, VERSION);
+        super(context, "MyDB", null, VERSION);
         this.context=context;
     }
 
@@ -87,7 +87,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Model> getAllData(){
 
         ArrayList<Model> allData=new ArrayList<>();
-        SQLiteDatabase db=this.getReadableDatabase();
+        SQLiteDatabase db=this.getWritableDatabase();
         Cursor data=db.query(TableName,null,null,null,null,null,null);
         while (data.moveToNext()){
 
