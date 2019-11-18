@@ -8,7 +8,7 @@ import com.example.moneytracker.ModelClass.SecurityTableModel;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@androidx.room.Database(entities = {SecurityTableModel.class, AccountingTable.class},version = 1,exportSchema = false)
+@androidx.room.Database(entities = {SecurityTableModel.class, AccountingTable.class},version = 2,exportSchema = false)
 public abstract class Database extends RoomDatabase {
 
     private static Database database=null;

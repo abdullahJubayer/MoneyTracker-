@@ -84,6 +84,7 @@ public class Setting_Fragment extends Fragment implements View.OnClickListener {
                 String password=pass.getText().toString();
 
                 SecurityTableModel model1=new SecurityTableModel(name,password,getBitmapAsByteArray(imageData));
+                model1.setId(0);
                 new InsertUserData(database).execute(model1);
 
             }
@@ -187,7 +188,6 @@ public class Setting_Fragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected Long doInBackground(SecurityTableModel... securityTableModels) {
-                   userDao.deleteData();
             return userDao.insertUserInfo(securityTableModels[0]);
         }
 

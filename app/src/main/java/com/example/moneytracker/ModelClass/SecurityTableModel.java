@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "SecurityTable")
 public class SecurityTableModel implements Serializable {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey()
     private int id;
     private String userName;
     private String userPassword;

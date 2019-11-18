@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (validet()){
-                    new CurrentUserInfo(database).execute();
+                    new CurrentUserInfo().execute();
                         }
                     }
         });
@@ -73,10 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     class  CurrentUserInfo extends AsyncTask<Void,Void, List<SecurityTableModel>> {
         private Dao userDao;
-        private Database database;
 
-        public CurrentUserInfo(Database database){
-            this.database=database;
+        public CurrentUserInfo(){
             userDao=database.myDao();
         }
         @Override
@@ -86,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<SecurityTableModel> userInfo) {
-            if (userInfo.size() == 0){
+            if (userInfo.size()== 0){
                 Toast.makeText(MainActivity.this, "No admin Found", Toast.LENGTH_SHORT).show();
             }else{
                 String databaseName=userInfo.get(0).getUserName();

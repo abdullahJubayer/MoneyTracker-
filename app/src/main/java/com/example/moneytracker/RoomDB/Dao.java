@@ -12,7 +12,7 @@ import androidx.room.Update;
 
 @androidx.room.Dao
 public interface Dao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertUserInfo(SecurityTableModel model);
 
     @Insert
@@ -47,9 +47,6 @@ public interface Dao {
 
     @Query("Select  * From AccountingTable Where Year=:val")
     List<AccountingTable> getYraelyListData(String val);
-
-    @Query("Delete From AccountingTable")
-    void deleteData();
 
     @Query("Delete From AccountingTable where id=:id")
     int deleteDataWithID(int id);
