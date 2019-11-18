@@ -1,10 +1,13 @@
 package com.example.moneytracker.Activity;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.moneytracker.Fragment.CreditFragment;
 import com.example.moneytracker.Fragment.DayList_Fragment;
@@ -14,8 +17,10 @@ import com.example.moneytracker.Fragment.ExpensesFragment;
 import com.example.moneytracker.Fragment.MonthlyLIst_Fragment;
 import com.example.moneytracker.Fragment.Setting_Fragment;
 import com.example.moneytracker.Fragment.YearlyList_Fragment;
-import com.example.moneytracker.ModelClass.Model;
 import com.example.moneytracker.R;
+import com.example.moneytracker.ModelClass.AccountingTable;
+
+import java.util.Objects;
 
 public class ContainerList extends AppCompatActivity implements DayList_Fragment.SendDataDaily,MonthlyLIst_Fragment.SendDataMonthly ,YearlyList_Fragment.YearlyData{
 
@@ -28,7 +33,7 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.dailyList_layout,addLayout(tag));
+        transaction.replace(R.id.dailyList_layout, Objects.requireNonNull(addLayout(tag)));
         transaction.commit();
     }
 
@@ -49,7 +54,7 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
 
 
     @Override
-    public void send(Model model) {
+    public void send(AccountingTable model) {
         if (model==null){
             Toast.makeText(ContainerList.this,"model null",Toast.LENGTH_SHORT).show();
         }else {
@@ -59,7 +64,7 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
 
 
     @Override
-    public void sendMonthly(Model model) {
+    public void sendMonthly(AccountingTable model) {
         if (model==null){
             Toast.makeText(ContainerList.this,"model null",Toast.LENGTH_SHORT).show();
         }else {
@@ -68,7 +73,7 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
     }
 
     @Override
-    public void sendYearly(Model model) {
+    public void sendYearly(AccountingTable model) {
         if (model==null){
             Toast.makeText(ContainerList.this,"model null",Toast.LENGTH_SHORT).show();
         }else {
@@ -76,7 +81,8 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
         }
     }
 
-    private void startFragment(Model model) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void startFragment(AccountingTable model) {
         switch (model.getType()){
             case "Deposit":
                 DepositFragment depositFragment=new DepositFragment();
@@ -98,7 +104,7 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
 
 }
 
-    private void setFragment(Fragment fragment,Model model) {
+    private void setFragment(Fragment fragment,AccountingTable model) {
         Bundle bundle=new Bundle();
         bundle.putSerializable("data",model);
         FragmentManager manager = getSupportFragmentManager();

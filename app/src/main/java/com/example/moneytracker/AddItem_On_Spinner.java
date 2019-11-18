@@ -27,8 +27,6 @@ private Bundle bundle;
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // onDestroy();
-
                 onBackPressed();
             }
         });

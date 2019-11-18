@@ -3,19 +3,17 @@ package com.example.moneytracker.Fragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +22,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.moneytracker.Activity.ContainerList;
 import com.example.moneytracker.Activity.MainActivity;
-import com.example.moneytracker.DB.DBHelper;
-import com.example.moneytracker.ModelClass.Model_UserInfo;
 import com.example.moneytracker.R;
+import com.example.moneytracker.RoomDB.Dao;
+import com.example.moneytracker.RoomDB.Database;
+import com.example.moneytracker.ModelClass.SecurityTableModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -46,10 +45,12 @@ public class Setting_Fragment extends Fragment implements View.OnClickListener {
     EditText editText,pass;
     Button button;
     Bitmap imageData;
-    DBHelper helper;
+    Database database;
 
     public Setting_Fragment() {
-        // Required empty public constructor
+
+            database=Database.getInstance(getContext());
+
     }
 
 
@@ -58,14 +59,12 @@ public class Setting_Fragment extends Fragment implements View.OnClickListener {
 
         View v= inflater.inflate(R.layout.fragment_setting_, container, false);
 
-        ((ContainerList)getActivity()).setTitle("Register");
+       Objects.requireNonNull(getActivity()).setTitle("Register");
 
         imageView=v.findViewById(R.id.edit_pro_image);
         editText=v.findViewById(R.id.edit_pro_name);
         button=v.findViewById(R.id.pro_update_btn);
         pass=v.findViewById(R.id.edit_pro_pass);
-
-        helper=new DBHelper(getContext());
 
         imageView.setOnClickListener(this);
         button.setOnClickListener(this);
@@ -84,17 +83,9 @@ public class Setting_Fragment extends Fragment implements View.OnClickListener {
                 String name=editText.getText().toString();
                 String password=pass.getText().toString();
 
-                Model_UserInfo model=new Model_UserInfo(name,password,getBitmapAsByteArray(imageData));
-                long result=helper.updateImgPass(model);
+                SecurityTableModel model1=new SecurityTableModel(name,password,getBitmapAsByteArray(imageData));
+                new InsertUserData(database).execute(model1);
 
-                if (result==-1){
-                    Toast.makeText(getContext(),"Profile Update Failed",Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(getContext(),"Profile Update Success",Toast.LENGTH_SHORT).show();
-                    Intent intent=new Intent(getContext(), MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                }
             }
         }
     }
@@ -169,7 +160,7 @@ public class Setting_Fragment extends Fragment implements View.OnClickListener {
             Uri thumbnail=data.getData();
             Bitmap  mBitmap = null;
             try {
-                mBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), thumbnail);
+                mBitmap = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(getContext()).getContentResolver(), thumbnail);
                 imageData=mBitmap;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -183,4 +174,34 @@ public class Setting_Fragment extends Fragment implements View.OnClickListener {
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
         return outputStream.toByteArray();
     }
+
+    class InsertUserData extends AsyncTask<SecurityTableModel, Void, Long> {
+
+        private Dao userDao;
+        private Database database;
+
+        public InsertUserData(Database database){
+            this.database=database;
+            userDao=database.myDao();
+        }
+
+        @Override
+        protected Long doInBackground(SecurityTableModel... securityTableModels) {
+                   userDao.deleteData();
+            return userDao.insertUserInfo(securityTableModels[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Long result) {
+            if (result==-1){
+                Toast.makeText(getContext(),"Profile Update Failed",Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(getContext(),"Profile Update Success",Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(getContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        }
+    }
+
 }

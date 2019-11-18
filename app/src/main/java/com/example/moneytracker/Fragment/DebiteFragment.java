@@ -7,11 +7,12 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -27,9 +28,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.moneytracker.DB.DBHelper;
-import com.example.moneytracker.ModelClass.Model;
+
+import androidx.annotation.RequiresApi;
+
 import com.example.moneytracker.R;
+import com.example.moneytracker.RoomDB.Dao;
+import com.example.moneytracker.RoomDB.Database;
+import com.example.moneytracker.ModelClass.AccountingTable;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -42,25 +48,27 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class DebiteFragment extends Fragment implements View.OnClickListener {
 
     EditText amount,note,nameOfDebtor;
     TextView currentDate,backDate;
     ImageView image;
     ImageButton calculator;
-    DBHelper helper;
     Button saveBtn,cancleBtn;
     final Calendar myCalendar = Calendar.getInstance();
     String cDate;
     private  int GALLERY=1,CAMERA=2;
     Bitmap imageData;
     private static final String Type="Debit";
-    private Model accessModel;
+    private AccountingTable accessModel;
     private String Month,Year;
+    private Database database;
 
 
     public DebiteFragment() {
         // Required empty public constructor
+        database=Database.getInstance(getContext());
     }
 
 
@@ -72,7 +80,7 @@ public class DebiteFragment extends Fragment implements View.OnClickListener {
 
         if (getArguments() != null){
             saveBtn.setText("UPDATE");
-            accessModel= (Model) getArguments().getSerializable("data");
+            accessModel= (AccountingTable) getArguments().getSerializable("data");
             if (accessModel != null){
                 amount.setText(accessModel.getAmount());
                 nameOfDebtor.setText(accessModel.getColumn2());
@@ -84,8 +92,6 @@ public class DebiteFragment extends Fragment implements View.OnClickListener {
             }
         }
 
-        helper=new DBHelper(getContext());
-        SQLiteDatabase db=helper.getWritableDatabase();
 
         currentDate.setOnClickListener(this);
         backDate.setOnClickListener(this);
@@ -156,6 +162,8 @@ public class DebiteFragment extends Fragment implements View.OnClickListener {
         }
         if (v==saveBtn){
             if (validation()){
+
+
                 String Amount=amount.getText().toString();
                 String name=nameOfDebtor.getText().toString();
                 String CurrentDate=currentDate.getText().toString();
@@ -173,14 +181,8 @@ public class DebiteFragment extends Fragment implements View.OnClickListener {
                         Year=formaterYear.format(date);
                     }
 
-                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
-                    long row=helper.insertData(data);
-
-                    if (row == -1){
-                        Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
-                    }
+                    AccountingTable model=new AccountingTable(Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
+                    insertDate(model);
                 }
                 else if(saveBtn.getText().equals(getString(R.string.update_txt))){
 
@@ -193,14 +195,9 @@ public class DebiteFragment extends Fragment implements View.OnClickListener {
                         Year=formaterYear.format(date);
                     }
 
-                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
-                    long result=helper.updateData(accessModel.getID(),data);
-
-                    if (result == -1){
-                        Toast.makeText(getContext(),"Data Updated Failed",Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(getContext(),"Data Updated Success",Toast.LENGTH_SHORT).show();
-                    }
+                    AccountingTable model=new AccountingTable(Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
+                    model.setID(accessModel.getID());
+                    updateData(model);
                 }
             }
             else {
@@ -209,6 +206,13 @@ public class DebiteFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void insertDate(AccountingTable model) {
+        new InsertData().execute(model);
+    }
+
+    private void updateData(AccountingTable accessModel) {
+        new UpdateData().execute(accessModel);
+    }
 
 
     private void updateLabel() {
@@ -336,6 +340,48 @@ public class DebiteFragment extends Fragment implements View.OnClickListener {
             return img;
         }catch (Exception e){
             return null;
+        }
+    }
+
+    private class InsertData extends AsyncTask<AccountingTable,Void,Long> {
+        private Dao myDao;
+        public InsertData(){
+            myDao=database.myDao();
+        }
+
+        @Override
+        protected Long doInBackground(AccountingTable... accountingTables) {
+            return myDao.InsertUserData(accountingTables[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Long row) {
+            if (row == -1){
+                Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class UpdateData extends AsyncTask<AccountingTable,Void,Integer> {
+        private Dao myDao;
+        public UpdateData(){
+            myDao=database.myDao();
+        }
+        @Override
+        protected Integer doInBackground(AccountingTable... accountingTables) {
+            return myDao.updateAccountingTable(accountingTables[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            notifyAll();
+            if (integer == -1){
+                Toast.makeText(getContext(),"Data Updated Failed",Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(getContext(),"Data Updated Success",Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

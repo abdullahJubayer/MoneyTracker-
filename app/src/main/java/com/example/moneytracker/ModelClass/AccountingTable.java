@@ -1,12 +1,15 @@
 package com.example.moneytracker.ModelClass;
 
-import android.os.Parcelable;
-
 import java.io.Serializable;
 
-public class Model implements Serializable {
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity
+public class AccountingTable implements Serializable {
+    @PrimaryKey(autoGenerate = true)
     private  int ID;
+
     private  String Amount;
     private  String Column2;
     private  String Column3;
@@ -17,8 +20,11 @@ public class Model implements Serializable {
     private  String Month;
     private  String Year;
 
-    public Model(int id,String amount, String column2, String column3, String column4, String note, byte[] image, String type,String month,String year) {
-        ID=id;
+    public AccountingTable(){
+
+    }
+
+    public AccountingTable(String amount, String column2, String column3, String column4, String note, byte[] image, String type, String month, String year) {
         Amount = amount;
         Column2 = column2;
         Column3 = column3;
@@ -26,13 +32,54 @@ public class Model implements Serializable {
         Note = note;
         Image = image;
         Type = type;
-        Month=month;
-        Year=year;
+        Month = month;
+        Year = year;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public void setAmount(String amount) {
+        Amount = amount;
+    }
+
+    public void setColumn2(String column2) {
+        Column2 = column2;
+    }
+
+    public void setColumn3(String column3) {
+        Column3 = column3;
+    }
+
+    public void setColumn4(String column4) {
+        Column4 = column4;
+    }
+
+    public void setNote(String note) {
+        Note = note;
+    }
+
+    public void setImage(byte[] image) {
+        Image = image;
+    }
+
+    public void setType(String type) {
+        Type = type;
+    }
+
+    public void setMonth(String month) {
+        Month = month;
+    }
+
+    public void setYear(String year) {
+        Year = year;
     }
 
     public int getID() {
         return ID;
     }
+
     public String getAmount() {
         return Amount;
     }

@@ -6,32 +6,21 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.moneytracker.DB.DBHelper;
-import com.example.moneytracker.Fragment.Setting_Fragment;
-import com.example.moneytracker.ModelClass.Model;
-import com.example.moneytracker.ModelClass.Model_UserInfo;
 import com.example.moneytracker.R;
-import com.example.moneytracker.Fragment.CreditFragment;
-import com.example.moneytracker.Fragment.DebiteFragment;
-import com.example.moneytracker.Fragment.DepositFragment;
-import com.example.moneytracker.Fragment.ExpensesFragment;
 import com.example.moneytracker.Fragment.HomeFragment;
-
-import java.util.ArrayList;
+import com.example.moneytracker.ModelClass.AccountingTable;
+import com.example.moneytracker.ModelClass.SecurityTableModel;
+import java.util.Objects;
 
 public class DrawerActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener, HomeFragment.SendData {
 
@@ -42,20 +31,17 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
     ViewPager viewPager;
     TextView tab1,tab2,tab3,tab4,tab5;
     private ViewPagerAdapter pagerAdapter;
-    DBHelper helper;
     View headerView;
-    Model_UserInfo userInfo;
+    SecurityTableModel userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        userInfo= (Model_UserInfo) getIntent().getSerializableExtra("Data");
-
-        helper=new DBHelper(this);
+        userInfo= (SecurityTableModel) getIntent().getSerializableExtra("Data");
 
 
         navigationView=findViewById(R.id.navigation_drawer);
@@ -89,8 +75,8 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         headerView = navigationView.getHeaderView(0);
         TextView name=headerView.findViewById(R.id.nav_header_profile_name);
         ImageView image=headerView.findViewById(R.id.nav_header_profile_image);
-        name.setText(userInfo.getName());
-        image.setImageBitmap(getBitmap(userInfo.getIMG()));
+        name.setText(userInfo.getUserName());
+        image.setImageBitmap(getBitmap(userInfo.getUserImage()));
 
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -249,7 +235,7 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void send(Model model) {
+    public void send(AccountingTable model) {
         if (model==null){
             Toast.makeText(DrawerActivity.this,"model null",Toast.LENGTH_SHORT).show();
         }else {
@@ -268,7 +254,7 @@ public class DrawerActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    @Override
+      @Override
     public void onBackPressed() {
         if (viewPager.getCurrentItem()!= 0) {
             viewPager.setCurrentItem(0);

@@ -7,17 +7,16 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,39 +28,49 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.moneytracker.DB.DBHelper;
-import com.example.moneytracker.ModelClass.Model;
+
+import androidx.annotation.RequiresApi;
+
 import com.example.moneytracker.R;
+import com.example.moneytracker.RoomDB.Dao;
+import com.example.moneytracker.RoomDB.Database;
+import com.example.moneytracker.ModelClass.AccountingTable;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
+
 import static android.app.Activity.RESULT_OK;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class CreditFragment extends Fragment implements View.OnClickListener {
 
     EditText amount,note,nameOfCreditor;
     TextView currentDate,backDate;
     ImageView image;
     ImageButton calculator;
-    DBHelper helper;
     Button saveBtn,cancleBtn;
     final Calendar myCalendar = Calendar.getInstance();
     String cDate;
     private  int GALLERY=1,CAMERA=2;
     Bitmap imageData;
     private static final String Type="Credit";
-    private Model accessModel;
+    private AccountingTable accessModel;
     private String Month,Year;
+    private Database database;
+    private Dao myDao;
 
 
     public CreditFragment() {
-        // Required empty public constructor
+        database=Database.getInstance(getContext());
+        myDao=database.myDao();
     }
 
 
@@ -73,7 +82,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
 
         if (getArguments() != null){
             saveBtn.setText("UPDATE");
-            accessModel= (Model) getArguments().getSerializable("data");
+            accessModel= (AccountingTable) getArguments().getSerializable("data");
             if (accessModel != null){
                 amount.setText(accessModel.getAmount());
                 nameOfCreditor.setText(accessModel.getColumn2());
@@ -84,8 +93,6 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
                 note.setText(accessModel.getNote());
             }
         }
-        helper=new DBHelper(getContext());
-        SQLiteDatabase db=helper.getWritableDatabase();
 
         currentDate.setOnClickListener(this);
         backDate.setOnClickListener(this);
@@ -111,6 +118,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
 
     final DatePickerDialog.OnDateSetListener datepicker1 = new DatePickerDialog.OnDateSetListener() {
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
@@ -125,6 +133,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
     };
     final DatePickerDialog.OnDateSetListener datepicker2 = new DatePickerDialog.OnDateSetListener() {
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
@@ -138,15 +147,16 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
 
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View v) {
         if (v==currentDate){
-            new DatePickerDialog(getContext(), datepicker1, myCalendar
+            new DatePickerDialog(Objects.requireNonNull(getContext()), datepicker1, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
         }
         if (v==backDate){
-            new DatePickerDialog(getContext(), datepicker2, myCalendar
+            new DatePickerDialog(Objects.requireNonNull(getContext()), datepicker2, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                     myCalendar.get(Calendar.DAY_OF_MONTH)).show();
         }
@@ -173,14 +183,8 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
                         Year=formaterYear.format(date);
                     }
 
-                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
-                    long row=helper.insertData(data);
-
-                    if (row == -1){
-                        Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
-                    }
+                    AccountingTable table=new AccountingTable(Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
+                    insertData(table);
                 }
                 else if(saveBtn.getText().equals(getString(R.string.update_txt))){
 
@@ -192,14 +196,9 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
                         Year=formaterYear.format(date);
                     }
 
-                    Model data=new Model(0,Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
-                    long result=helper.updateData(accessModel.getID(),data);
-
-                    if (result == -1){
-                        Toast.makeText(getContext(),"Data Updated Failed",Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(getContext(),"Data Updated Success",Toast.LENGTH_SHORT).show();
-                    }
+                    AccountingTable table=new AccountingTable(Amount,name,CurrentDate,BackDate,Note,image,Type,Month,Year);
+                    table.setID(accessModel.getID());
+                    updateData(table);
                 }
             }
             else {
@@ -208,8 +207,16 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void updateData(AccountingTable table) {
+        new UpdateData().execute(table);
+    }
+
+    private void insertData(AccountingTable table) {
+        new InsertData().execute(table);
+    }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void updateLabel() {
 
         String myFormat = "dd/MM/yyy";
@@ -223,6 +230,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
         Year=year.format(myCalendar.getTime());
         currentDate.setText(cDate);
     }
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void updateLabel2() {
         String myFormat = "dd/MM/yyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -258,7 +266,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
 
     private void takePhotoFromCamera() {
 
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.CAMERA},
@@ -280,7 +288,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
             Uri thumbnail=data.getData();
             Bitmap  mBitmap = null;
             try {
-                mBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), thumbnail);
+                mBitmap = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(getContext()).getContentResolver(), thumbnail);
                 imageData=mBitmap;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -339,5 +347,47 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
             return null;
         }
     }
+
+    private class InsertData extends AsyncTask<AccountingTable,Void,Long> {
+        private Dao myDao;
+        public InsertData(){
+            myDao=database.myDao();
+        }
+
+        @Override
+        protected Long doInBackground(AccountingTable... accountingTables) {
+            return myDao.InsertUserData(accountingTables[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Long row) {
+            if (row == -1){
+                Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class UpdateData extends AsyncTask<AccountingTable,Void,Integer>{
+        private Dao myDao;
+        public UpdateData(){
+            myDao=database.myDao();
+        }
+        @Override
+        protected Integer doInBackground(AccountingTable... accountingTables) {
+            return myDao.updateAccountingTable(accountingTables[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            if (integer == -1){
+                Toast.makeText(getContext(),"Data Updated Failed",Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(getContext(),"Data Updated Success",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
 }

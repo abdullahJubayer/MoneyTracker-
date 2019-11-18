@@ -1,41 +1,38 @@
 package com.example.moneytracker.Activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.moneytracker.DB.DBHelper;
-import com.example.moneytracker.ModelClass.Model_UserInfo;
 import com.example.moneytracker.R;
-
-import java.util.ArrayList;
+import com.example.moneytracker.RoomDB.Dao;
+import com.example.moneytracker.RoomDB.Database;
+import com.example.moneytracker.ModelClass.SecurityTableModel;
+import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     Button login;
     EditText name,password;
     TextView register;
-    DBHelper helper;
-    ArrayList<Model_UserInfo> userData;
+    private Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         name=findViewById(R.id.UserNameEDTId);
         password=findViewById(R.id.PasswordID);
         register=findViewById(R.id.register_id);
+        database=Database.getInstance(this);
 
-        helper=new DBHelper(this);
-        userData=helper.returnUserInfo();
 
         login=findViewById(R.id.LoginBtnId);
 
@@ -51,21 +48,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (validet()){
-                    if (userData.size() == 0){
-                        Toast.makeText(MainActivity.this, "No admin Found", Toast.LENGTH_SHORT).show();
-                    }else{
-                        String databaseName=userData.get(0).getName();
-                        String databasePass=userData.get(0).getPassword();
-                        String giveName=name.getText().toString();
-                        String givePass=password.getText().toString();
-
-                        if (databaseName.equals(giveName) && databasePass.equals(givePass)){
-                            Intent intent=new Intent(MainActivity.this,DrawerActivity.class).putExtra("Data",userData.get(0));
-                            startActivity(intent);
-                        }else {
-                            Toast.makeText(MainActivity.this,"UserName and Password Not Match",Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                    new CurrentUserInfo(database).execute();
                         }
                     }
         });
@@ -88,10 +71,36 @@ public class MainActivity extends AppCompatActivity {
         return val;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        userData=helper.returnUserInfo();
+    class  CurrentUserInfo extends AsyncTask<Void,Void, List<SecurityTableModel>> {
+        private Dao userDao;
+        private Database database;
 
+        public CurrentUserInfo(Database database){
+            this.database=database;
+            userDao=database.myDao();
+        }
+        @Override
+        protected List<SecurityTableModel> doInBackground(Void... voids) {
+            return userDao.getUser();
+        }
+
+        @Override
+        protected void onPostExecute(List<SecurityTableModel> userInfo) {
+            if (userInfo.size() == 0){
+                Toast.makeText(MainActivity.this, "No admin Found", Toast.LENGTH_SHORT).show();
+            }else{
+                String databaseName=userInfo.get(0).getUserName();
+                String databasePass=userInfo.get(0).getUserPassword();
+                String giveName=name.getText().toString();
+                String givePass=password.getText().toString();
+
+                if (databaseName.equals(giveName) && databasePass.equals(givePass)){
+                    Intent intent=new Intent(MainActivity.this,DrawerActivity.class).putExtra("Data",userInfo.get(0));
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(MainActivity.this,"UserName and Password Not Match",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 }

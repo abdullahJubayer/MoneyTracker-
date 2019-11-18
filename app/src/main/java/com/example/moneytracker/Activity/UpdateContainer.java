@@ -1,26 +1,30 @@
 package com.example.moneytracker.Activity;
 
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
+
 import com.example.moneytracker.Fragment.CreditFragment;
 import com.example.moneytracker.Fragment.DebiteFragment;
 import com.example.moneytracker.Fragment.DepositFragment;
 import com.example.moneytracker.Fragment.ExpensesFragment;
-import com.example.moneytracker.ModelClass.Model;
 import com.example.moneytracker.R;
+import com.example.moneytracker.ModelClass.AccountingTable;
 
 public class UpdateContainer extends AppCompatActivity {
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_container);
 
-        Model model= (Model) getIntent().getSerializableExtra("dataModel");
+        AccountingTable model= (AccountingTable) getIntent().getSerializableExtra("dataModel");
 
         switch (model.getType()){
             case "Deposit":
@@ -43,7 +47,7 @@ public class UpdateContainer extends AppCompatActivity {
 
     }
 
-    private void setFragment(Fragment fragment, Model model) {
+    private void setFragment(Fragment fragment, AccountingTable model) {
         Bundle bundle=new Bundle();
         bundle.putSerializable("data",model);
         FragmentManager manager = getSupportFragmentManager();

@@ -7,11 +7,12 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -29,11 +30,16 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+
 import com.example.moneytracker.AddItem_On_Spinner;
 import com.example.moneytracker.ArrayListClass;
-import com.example.moneytracker.DB.DBHelper;
-import com.example.moneytracker.ModelClass.Model;
 import com.example.moneytracker.R;
+import com.example.moneytracker.RoomDB.Dao;
+import com.example.moneytracker.RoomDB.Database;
+import com.example.moneytracker.ModelClass.AccountingTable;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -46,6 +52,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class ExpensesFragment extends Fragment implements View.OnClickListener {
 
     EditText amount,note;
@@ -59,14 +66,15 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
     Bitmap imageData;
     private int GALLERY = 1, CAMERA = 2;
     private static final String Type="Expenses";
-    private DBHelper dbHelper;
-    private Model accessModel;
+    private AccountingTable accessModel;
     private String Month,Year;
+    private Database database;
 
 
 
     public ExpensesFragment() {
         // Required empty public constructor
+        database=Database.getInstance(getContext());
     }
 
 
@@ -76,10 +84,6 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
 
         View v = inflater.inflate(R.layout.fragment_expenses, container, false);
         findID(v);
-
-
-        dbHelper = new DBHelper(getContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         newCategory.setOnClickListener(this);
         currentDate.setOnClickListener(this);
@@ -93,7 +97,7 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
 
         if (getArguments() != null){
             save.setText("UPDATE");
-            accessModel= (Model) getArguments().getSerializable("data");
+            accessModel= (AccountingTable) getArguments().getSerializable("data");
             if (accessModel != null){
                 amount.setText(accessModel.getAmount());
                 category.setSelection(returnSpinnerPosition(accessModel.getColumn2()));
@@ -181,14 +185,9 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
                         Year=formaterYear.format(date);
                     }
 
-                    Model data=new Model(0,Amount,Category,CurrentDate,null,Note,image,Type,Month,Year);
-                    long row=dbHelper.insertData(data);
+                    AccountingTable table=new AccountingTable(Amount,Category,CurrentDate,null,Note,image,Type,Month,Year);
+                    insertData(table);
 
-                    if (row == -1){
-                        Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
-                    }
                 }
                 else if(save.getText().equals(getString(R.string.update_txt))){
 
@@ -199,15 +198,9 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
                         Month=formaterMonth.format(date);
                         Year=formaterYear.format(date);
                     }
-
-                    Model data=new Model(0,Amount,Category,CurrentDate,null,Note,image,Type,Month,Year);
-                    long result=dbHelper.updateData(accessModel.getID(),data);
-
-                    if (result == -1){
-                        Toast.makeText(getContext(),"Data Updated Failed",Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(getContext(),"Data Updated Success",Toast.LENGTH_SHORT).show();
-                    }
+                    AccountingTable table=new AccountingTable(Amount,Category,CurrentDate,null,Note,image,Type,Month,Year);
+                    table.setID(accessModel.getID());
+                    updateData(table);
                 }
             }
             else {
@@ -217,6 +210,14 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
         if (v==cancel){
 
         }
+    }
+
+    private void updateData(AccountingTable table) {
+        new UpdateData().execute(table);
+    }
+
+    private void insertData(AccountingTable table) {
+        new InsertData().execute(table);
     }
 
     private void showPictureDialog(){
@@ -336,5 +337,45 @@ public class ExpensesFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private class InsertData extends AsyncTask<AccountingTable,Void,Long> {
+        private Dao myDao;
+        public InsertData(){
+            myDao=database.myDao();
+        }
+
+        @Override
+        protected Long doInBackground(AccountingTable... accountingTables) {
+            return myDao.InsertUserData(accountingTables[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Long row) {
+            if (row == -1){
+                Toast.makeText(getContext(),"Data Inserted Failed",Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(getContext(),"Data Inserted Success",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class UpdateData extends AsyncTask<AccountingTable,Void,Integer> {
+        private Dao myDao;
+        public UpdateData(){
+            myDao=database.myDao();
+        }
+        @Override
+        protected Integer doInBackground(AccountingTable... accountingTables) {
+            return myDao.updateAccountingTable(accountingTables[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            if (integer == -1){
+                Toast.makeText(getContext(),"Data Updated Failed",Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(getContext(),"Data Updated Success",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 }
