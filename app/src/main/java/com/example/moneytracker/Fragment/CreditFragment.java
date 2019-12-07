@@ -29,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 
 import com.example.moneytracker.R;
 import com.example.moneytracker.RoomDB.Dao;
@@ -49,7 +48,6 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class CreditFragment extends Fragment implements View.OnClickListener {
 
     EditText amount,note,nameOfCreditor;
@@ -118,7 +116,6 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
 
     final DatePickerDialog.OnDateSetListener datepicker1 = new DatePickerDialog.OnDateSetListener() {
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
@@ -133,7 +130,6 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
     };
     final DatePickerDialog.OnDateSetListener datepicker2 = new DatePickerDialog.OnDateSetListener() {
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
@@ -147,7 +143,6 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
 
     };
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View v) {
         if (v==currentDate){
@@ -216,7 +211,6 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void updateLabel() {
 
         String myFormat = "dd/MM/yyy";
@@ -230,7 +224,6 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
         Year=year.format(myCalendar.getTime());
         currentDate.setText(cDate);
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void updateLabel2() {
         String myFormat = "dd/MM/yyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -348,7 +341,7 @@ public class CreditFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private class InsertData extends AsyncTask<AccountingTable,Void,Long> {
+    private  class InsertData extends AsyncTask<AccountingTable,Void,Long> {
         private Dao myDao;
         public InsertData(){
             myDao=database.myDao();

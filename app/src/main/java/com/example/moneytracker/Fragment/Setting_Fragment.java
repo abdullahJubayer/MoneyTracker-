@@ -21,22 +21,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.example.moneytracker.Activity.MainActivity;
 import com.example.moneytracker.R;
 import com.example.moneytracker.RoomDB.Dao;
 import com.example.moneytracker.RoomDB.Database;
 import com.example.moneytracker.ModelClass.SecurityTableModel;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
-
 import static android.app.Activity.RESULT_OK;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class Setting_Fragment extends Fragment implements View.OnClickListener {
 
     private static final int CAMERA =1 ;

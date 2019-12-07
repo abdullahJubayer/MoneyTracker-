@@ -1,5 +1,4 @@
 package com.example.moneytracker.Activity;
-import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -7,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 
 import com.example.moneytracker.Fragment.CreditFragment;
 import com.example.moneytracker.Fragment.DayList_Fragment;
@@ -58,7 +56,7 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
         if (model==null){
             Toast.makeText(ContainerList.this,"model null",Toast.LENGTH_SHORT).show();
         }else {
-            startFragment(model);
+            runFragment(model);
         }
     }
 
@@ -68,7 +66,7 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
         if (model==null){
             Toast.makeText(ContainerList.this,"model null",Toast.LENGTH_SHORT).show();
         }else {
-            startFragment(model);
+            runFragment(model);
         }
     }
 
@@ -77,12 +75,11 @@ public class ContainerList extends AppCompatActivity implements DayList_Fragment
         if (model==null){
             Toast.makeText(ContainerList.this,"model null",Toast.LENGTH_SHORT).show();
         }else {
-            startFragment(model);
+            runFragment(model);
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void startFragment(AccountingTable model) {
+    private void runFragment(AccountingTable model) {
         switch (model.getType()){
             case "Deposit":
                 DepositFragment depositFragment=new DepositFragment();

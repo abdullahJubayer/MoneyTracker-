@@ -31,7 +31,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 
 import com.example.moneytracker.AddItem_On_Spinner;
 import com.example.moneytracker.ArrayListClass;
@@ -52,7 +51,6 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class ExpensesFragment extends Fragment implements View.OnClickListener {
 
     EditText amount,note;
