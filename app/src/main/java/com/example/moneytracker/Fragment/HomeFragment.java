@@ -1,9 +1,9 @@
 package com.example.moneytracker.Fragment;
 
-
+import android.arch.lifecycle.Observer;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,14 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.example.moneytracker.Adatper.RecyclerAdapter;
 import com.example.moneytracker.R;
 import com.example.moneytracker.RoomDB.Dao;
 import com.example.moneytracker.RoomDB.Database;
 import com.example.moneytracker.ModelClass.AccountingTable;
 import com.example.moneytracker.ModelClass.TopBarModel;
-
 import java.util.List;
 
 
@@ -33,7 +31,7 @@ public class HomeFragment extends Fragment implements RecyclerAdapter.RecyclerIt
     public SendData sd;
     RecyclerView recyclerView;
     private RecyclerAdapter recyclerAdapter;
-    TextView income,expense,balance;
+    TextView income,expense,balanceTv;
     Database database;
     Dao myDao;
 
@@ -49,19 +47,47 @@ public class HomeFragment extends Fragment implements RecyclerAdapter.RecyclerIt
         View v=inflater.inflate(R.layout.fragment_home, container, false);
         Log.e("life","onCreateView");
 
-        getRecyclerData();
-
         recyclerView=v.findViewById(R.id.home_fragment_list);
         income=v.findViewById(R.id.home_fragment_income);
         expense=v.findViewById(R.id.home_fragment_expenses);
-        balance=v.findViewById(R.id.home_fragment_balance);
-
+        balanceTv=v.findViewById(R.id.home_fragment_balance);
 
         return v;
     }
 
     private void getRecyclerData() {
-        new GetData().execute();
+
+        myDao.getAlldata().observe(HomeFragment.this, new Observer<List<AccountingTable>>() {
+                @Override
+                public void onChanged(@Nullable List<AccountingTable> accountingTables) {
+                    double totalIncome=0.0,totalExpenses=0.0;
+
+                    list=accountingTables;
+                    if (list !=null && list.size()>0){
+                        recyclerAdapter=new RecyclerAdapter(getContext(),list);
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
+                        recyclerView.setAdapter(recyclerAdapter);
+                        recyclerAdapter.notifyDataSetChanged();
+                        recyclerAdapter.setClickListener(HomeFragment.this);
+
+                        for (AccountingTable table: list){
+                            if (table.getType().equals("Deposit") || table.getType().equals("Credit")){
+                                totalIncome+=Double.parseDouble(table.getAmount());
+                            }
+                            else {
+                                totalExpenses+=Double.parseDouble(table.getAmount());
+                            }
+                        }
+
+                        String balance=String.valueOf(totalIncome-totalExpenses);
+                        income.setText(String.valueOf(totalIncome));
+                        expense.setText(String.valueOf(totalExpenses));
+                        balanceTv.setText(balance);
+                    }
+                }
+            });
     }
 
     @Override
@@ -89,72 +115,6 @@ public class HomeFragment extends Fragment implements RecyclerAdapter.RecyclerIt
     @Override
     public void onStart() {
         super.onStart();
-        new TopbarData().execute();
-    }
-
-    private class GetData extends AsyncTask<Void, Void, List<AccountingTable>> {
-        Dao myDao;
-        public GetData(){
-            myDao=database.myDao();
-        }
-        @Override
-        protected List<AccountingTable> doInBackground(Void... voids) {
-            return myDao.getAlldata();
-        }
-
-        @Override
-        protected void onPostExecute(List<AccountingTable> accountingTables) {
-            list=accountingTables;
-            recyclerAdapter=new RecyclerAdapter(getContext(),list);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
-            recyclerView.setAdapter(recyclerAdapter);
-            recyclerAdapter.notifyDataSetChanged();
-            recyclerAdapter.setClickListener(HomeFragment.this);
-        }
-    }
-
-    private class TopbarData  extends AsyncTask<Void, Void, TopBarModel> {
-        private Dao myDao;
-        public TopbarData(){
-            myDao=database.myDao();
-        }
-        @Override
-        protected TopBarModel doInBackground(Void... voids) {
-            List<AccountingTable> deposit=myDao.getDepositData();
-            List<AccountingTable> credit= myDao.getCreditData();
-            List<AccountingTable> debit= myDao.getDebitData();
-            List<AccountingTable> expense= myDao.getExpenseData();
-            Double totalIncome=0.0,totalExpenses=0.0,depositTaka=0.0,creditTaka=0.0,expensesTaka=0.0,debitTaka=0.0;
-
-            for (AccountingTable table:deposit){
-                depositTaka=depositTaka+Double.parseDouble(table.getAmount());
-            }
-            for (AccountingTable table:credit){
-                creditTaka=creditTaka+Double.parseDouble(table.getAmount());
-            }
-
-            for (AccountingTable table:debit){
-                debitTaka=debitTaka+Double.parseDouble(table.getAmount());
-            }
-            for (AccountingTable table:expense){
-                expensesTaka=expensesTaka+Double.parseDouble(table.getAmount());
-            }
-
-            totalIncome=depositTaka+creditTaka;
-
-            totalExpenses=expensesTaka+debitTaka;
-
-            TopBarModel model=new TopBarModel(String.valueOf(totalIncome),String.valueOf(totalExpenses),String.valueOf(totalIncome-totalExpenses));
-            return model;
-        }
-
-        @Override
-        protected void onPostExecute(TopBarModel model) {
-            income.setText(model.getTotalIncom());
-            expense.setText(model.getTotalExpence());
-            balance.setText(model.getMainBalance());
-        }
+        getRecyclerData();
     }
 }
